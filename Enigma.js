@@ -30,6 +30,9 @@ class Enigma {
 
     onKey(key) {
         this.context.value = key;
+
+        this.r1.onTick();
+
         this.middleware.run([this.context], (err) => {
             if (err) console.log(err);
 
