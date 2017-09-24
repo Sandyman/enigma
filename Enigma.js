@@ -31,8 +31,10 @@ class Enigma {
     onKey(key) {
         this.context.value = key;
 
+        // The key press originally progressed the wheels, before closing the circuit.
         this.r1.onTick();
 
+        // Calculate result of "closed circuit"
         this.middleware.run([this.context], (err) => {
             if (err) console.log(err);
 
