@@ -10,11 +10,16 @@ class Enigma {
     }
 
     init() {
-        this.e = new Rotor('ETW'); // entry wheel
-        this.r1 = new Rotor('III'); // right
-        this.r2 = new Rotor('II', this.r1.onTick); // middle
-        this.r3 = new Rotor('I', this.r2.onTick); // left
-        this.rr = new Rotor('UKW'); // reflector
+        // Entry wheel
+        this.e = new Rotor('ETW');
+
+        // Reflector
+        this.rr = new Rotor('UKW');
+
+        // Rotors
+        this.r3 = new Rotor('I');
+        this.r2 = new Rotor('II', this.r3.onTurnover);
+        this.r1 = new Rotor('III', this.r2.onTurnover);
 
         this.middleware = new Middleware();
         this.middleware.use(this.e.fwd);
@@ -28,11 +33,15 @@ class Enigma {
         this.middleware.use(this.e.rev);
     }
 
+    inView() {
+        return `${this.r3.inView()}${this.r2.inView()}${this.r1.inView()}`;
+    }
+
     onKey(key) {
         this.context.value = key;
 
         // The key press originally progressed the wheels, before closing the circuit.
-        this.r1.onTick();
+        this.r1.onTurnover();
 
         // Calculate result of "closed circuit"
         this.middleware.run([this.context], (err) => {

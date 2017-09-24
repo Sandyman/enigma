@@ -3,13 +3,17 @@ const autoBind = require('auto-bind');
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 class Rotor {
-    constructor(type, l) {
+    constructor(type, turnoverListener) {
         autoBind(this);
 
         this.rotor = Rotor.ciphers[type].sub;
         this.turnover = Rotor.ciphers[type].turnover;
+        this.turnoverListener = turnoverListener;
         this.tick = 0;
-        this.tickListener = l;
+    }
+
+    inView() {
+        return alphabet.substr(this.tick, 1);
     }
 
     static mod(v) {
@@ -32,8 +36,11 @@ class Rotor {
         next();
     }
 
-    onTick() {
-        this.tick = (this.tick + 1) % 26;
+    onTurnover() {
+        if (this.turnoverListener && this.inView() === this.turnover) {
+            this.turnoverListener();
+        }
+        this.tick = Rotor.mod(this.tick + 1);
     }
 }
 
