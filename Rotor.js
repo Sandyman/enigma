@@ -4,6 +4,10 @@ const Rotors = require('./Rotors');
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 class Rotor {
+    /**
+     * Constructor
+     * @param options
+     */
     constructor(options) {
         autoBind(this);
 
@@ -13,74 +17,94 @@ class Rotor {
         this.tick = 0;
     }
 
-    static mod(v) {
-        return (v % 26);
-    }
-
-    // Ordinal value of character
-    static ord(v) {
+    /**
+     * Return index of character in alphabet
+     */
+    static _idx(v) {
         return v.charCodeAt(0) - 'A'.charCodeAt(0);
     }
 
-    // Character by ordinal value
-    static chr(v) {
+    /**
+     * Return character based on its ordinal value
+     */
+    static _chr(v) {
         return String.fromCharCode(v + 'A'.charCodeAt(0));
     }
 
-    // Perform
-    static sub1(v) {
-        return Rotor.chr((Rotor.ord(v) + 25) % 26);
+    /**
+     * Return the character preceding the current value, e.g.,
+     *   C -> B, Z -> Y, A -> Z
+     */
+    static _dec(v) {
+        return Rotor._chr((Rotor._idx(v) + 25) % 26);
     }
 
     /**
-     * Rotate alphabet means two things:
+     * Return the character currently in view for this rotor
+     * @returns {string}
+     */
+    inView() {
+        return alphabet.substr(this.tick, 1);
+    }
+
+    /**
+     * The forward path through the rotors
+     * @param ctx
+     * @param next
+     */
+    fwd(ctx, next) {
+        const v = ctx.value;
+        const i = alphabet.indexOf(v);
+        const c = this.rotor.substr(i, 1);
+        ctx.value = c;
+        next();
+    };
+
+    /**
+     * The reverse path through the rotors
+     * @param ctx
+     * @param next
+     */
+    rev(ctx, next) {
+        const v = ctx.value;
+        const i = this.rotor.indexOf(v);
+        const c = alphabet.substr(i, 1);
+        ctx.value = c;
+        next();
+    }
+
+    /**
+     * Every key press is preceded by a turnover (the rotor rotates to new position).
+     */
+    onTurnover() {
+        if (this.turnoverListener) {
+            // Determine whether we need to rotate the next rotor as well.
+            if (this.turnover.indexOf(this.inView()) >= 0) {
+                this.turnoverListener();
+            }
+        }
+        this.tick = (this.tick + 1) % 26;
+        this.rotateByOne();
+    }
+
+    /**
+     * Rotate alphabet by means of a rotor means two things:
      * - all letters move forward (to the front) one position
      * - every letter becomes its predecessor (B -> A, Q -> P, A -> Z)
      * - if A == 0, B == 1, Z == 25, then
      *     y(next) := (y + alphabet-length - 1) % alphabet-length, or
      *     y(next) := (y + 25) % 26
-     *   or in other words: rotate fwd by 1 equals rotate bkwd by +25
-     * - each letter y becomes ord(letter) by y.charCodeAt(0) - 'A'.charCodeAt(0)
+     *   or in other words: rotate forward by 1 equals rotate backward by 25
      */
     rotateByOne() {
         const enc = this.rotor.split('');
         const f = enc.shift();
         const r = enc.reduce((memo, value) => {
-            memo.push(Rotor.sub1(value));
+            memo.push(Rotor._dec(value));
             return memo;
         }, []);
-        r.push(Rotor.sub1(f));
+        r.push(Rotor._dec(f));
         this.rotor = r.join('');
-    }
-
-    inView() {
-        return alphabet.substr(this.tick, 1);
-    }
-
-    fwd(ctx, next) {
-        const v = ctx.value;
-        const i = alphabet.indexOf(v);
-        const c = this.rotor.substr(Rotor.mod(i), 1);
-        ctx.value = c;
-        next();
-    };
-
-    rev(ctx, next) {
-        const v = ctx.value;
-        const i = this.rotor.indexOf(v);
-        const c = alphabet.substr(Rotor.mod(i), 1);
-        ctx.value = c;
-        next();
-    }
-
-    onTurnover() {
-        if (this.turnoverListener) {
-            if (this.turnover.indexOf(this.inView()) >= 0) {
-                this.turnoverListener();
-            }
-        }
-        this.tick = Rotor.mod(this.tick + 1);
-        this.rotateByOne();
     }
 }
 
