@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "auto-bind": "^1.1.0"
+    "auto-bind": "^1.1.0",
+    "underscore": "^1.8.3"
   }
 }
