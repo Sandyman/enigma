@@ -7,26 +7,60 @@ class Enigma {
      * onKey() (see below). If you pass in a resultListener though onKey(),
      * it will override the one passed in here.
      */
-    constructor(resultListener) {
+    constructor(options, resultListener) {
+        if (typeof options === 'function') {
+            resultListener = options;
+            options = Object.assign({}, Enigma.defaultOptions());
+        }
         this.resultListener = resultListener;
 
-        this.init();
+        this.init(options);
+    }
+
+    /**
+     * Default options when no options passed in
+     */
+    static defaultOptions() {
+        return {
+            rightRingType: 'III',
+            middleRingType: 'II',
+            leftRingType: 'I',
+            reflectorType: 'UKW-B',
+            ringOffset: 'AAA',
+            wheelSetting: 'AAA',
+        }
     }
 
     /**
      * Initialise Enigma. This should become configurable.
      */
-    init() {
+    init(options) {
         // Entry wheel
-        this.e = new Rotor({ type: 'ETW' });
+        this.e = new Rotor({
+            type: 'ETW',
+        });
 
         // Reflector
-        this.rr = new Rotor({ type: 'UKW-B' });
+        this.rr = new Rotor({
+            type: options.reflectorType,
+        });
 
         // Rotors (left-to-right: r3 | r2 | r1)
-        this.r3 = new Rotor({ type: 'I' });
-        this.r2 = new Rotor({ type: 'II' });
-        this.r1 = new Rotor({ type: 'III', ringOffset: 'B' });
+        this.r3 = new Rotor({
+            type: options.leftRingType,
+            ringOffset: options.ringOffset[0],
+            wheelSetting: options.wheelSetting[0],
+        });
+        this.r2 = new Rotor({
+            type: options.middleRingType,
+            ringOffset: options.ringOffset[1],
+            wheelSetting: options.wheelSetting[1],
+        });
+        this.r1 = new Rotor({
+            type: options.rightRingType,
+            ringOffset: options.ringOffset[2],
+            wheelSetting: options.wheelSetting[2],
+        });
 
         // Rotor controller (signal flows right-to-left)
         this.controller = new Controller();

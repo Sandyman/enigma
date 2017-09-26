@@ -25,7 +25,7 @@ class Rotor {
         this.turnover = Rotors[options.type].turnover;
         this.isFixed = !!options.isFixed;
         this.ringOffset = options.ringOffset ? _idx(options.ringOffset[0]) : 0;
-        this.tick = 0;
+        this.wheelSetting = options.wheelSetting ? _idx(options.wheelSetting) : 0;
     }
 
     /**
@@ -38,7 +38,27 @@ class Rotor {
      * @returns {string}
      */
     inView() {
-        return alphabet.substr(this.tick, 1);
+        return alphabet.substr(this.wheelSetting, 1);
+    }
+
+    /**
+     * Encode the value in context based on current rotor settings. The
+     * function f: num -> char depends on the direction of the data flow.
+     * @param ctx
+     * @param f
+     * @private
+     */
+    _encode(ctx, f) {
+        // Take into account that some rotors don't rotate
+        const offset = this.turnover ? this.wheelSetting : 0;
+
+        let n = _idx(ctx.value);
+        n = _mod(n - this.ringOffset);
+        n = _mod(n + offset);
+        n = f(n);
+        n = _mod(n - offset);
+        n = _mod(n + this.ringOffset);
+        ctx.value = _chr(n);
     }
 
     /**
@@ -47,14 +67,8 @@ class Rotor {
      * @param next
      */
     fwd(ctx, next) {
-        // Take into account that some rotors don't rotate
-        const tick = this.turnover ? this.tick : 0;
-        const v = _idx(ctx.value);
-        const i = _mod(v + tick);
-        const c = this.rotor.substr(i, 1);
-        const j = _idx(c);
-        const n = _mod(v + j - i);
-        ctx.value = _chr(n);
+        const f = n => _idx(this.rotor[n]);
+        this._encode(ctx, f);
         next();
     };
 
@@ -64,13 +78,8 @@ class Rotor {
      * @param next
      */
     rev(ctx, next) {
-        // Take into account that some rotors don't rotate
-        const tick = this.turnover ? this.tick : 0;
-        const o = _idx(ctx.value);
-        const i = _mod(o + tick);
-        const c = _chr(i);
-        const j = this.rotor.indexOf(c);
-        ctx.value = _chr(_mod(o + j - i));
+        const f = n => this.rotor.indexOf(_chr(n));
+        this._encode(ctx, f);
         next();
     }
 
@@ -86,7 +95,7 @@ class Rotor {
      * Every key press is preceded by a turnover (the rotor rotates to new position).
      */
     onTurnover() {
-        this.tick = _mod(this.tick + 1);
+        this.wheelSetting = _mod(this.wheelSetting + 1);
     }
 }
 
