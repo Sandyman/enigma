@@ -21,9 +21,11 @@ class Rotor {
      *   C -> B, Z -> Y, A -> Z
      */
     static _dec(v) {
-        const chr = (v) => String.fromCharCode(v + 'A'.charCodeAt(0));
+        // This convenience function maps [A,B,C, ...] -> [0,1,2, ...]
         const idx = (v) => v.charCodeAt(0) - 'A'.charCodeAt(0);
-        return chr((idx(v) + 25) % 26);
+
+        // Because it's (mod 26), -1 basically equals +25
+        return alphabet[(idx(v) + 25) % 26];
     }
 
     /**
