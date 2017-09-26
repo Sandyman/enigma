@@ -22,7 +22,7 @@ class Rotor {
      */
     static _dec(v) {
         // This convenience function maps [A,B,C, ...] -> [0,1,2, ...]
-        const idx = (v) => v.charCodeAt(0) - 'A'.charCodeAt(0);
+        const idx = (v) => (v.charCodeAt(0) - 'A'.charCodeAt(0));
 
         // Because it's (mod 26), -1 basically equals +25
         return alphabet[(idx(v) + 25) % 26];
