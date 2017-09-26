@@ -14,7 +14,11 @@ class Enigma {
         }
         this.resultListener = resultListener;
 
-        this.init(options);
+        try {
+            this.init(options);
+        } catch (e) {
+            console.log(`Oops: ${e}`);
+        }
     }
 
     /**
@@ -46,20 +50,20 @@ class Enigma {
         });
 
         // Rotors (left-to-right: r3 | r2 | r1)
-        this.r3 = new Rotor({
-            type: options.leftRingType,
-            ringOffset: options.ringOffset[0],
-            wheelSetting: options.wheelSetting[0],
+        this.r1 = new Rotor({
+            type: options.rightRingType,
+            ringOffset: options.ringOffset[2],
+            wheelSetting: options.wheelSetting[2],
         });
         this.r2 = new Rotor({
             type: options.middleRingType,
             ringOffset: options.ringOffset[1],
             wheelSetting: options.wheelSetting[1],
         });
-        this.r1 = new Rotor({
-            type: options.rightRingType,
-            ringOffset: options.ringOffset[2],
-            wheelSetting: options.wheelSetting[2],
+        this.r3 = new Rotor({
+            type: options.leftRingType,
+            ringOffset: options.ringOffset[0],
+            wheelSetting: options.wheelSetting[0],
         });
 
         // Rotor controller (signal flows right-to-left)
