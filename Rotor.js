@@ -18,9 +18,14 @@ class Rotor {
     constructor(options) {
         autoBind(this);
 
+        if (!Rotors[options.type]) {
+            throw new Error(`Unknown Rotor Type '${options.type}'!`);
+        }
+
         this.rotor = Rotors[options.type].sub;
         this.turnover = Rotors[options.type].turnover;
         this.isFixed = !!options.isFixed;
+        this.ringOffset = options.ringOffset ? _idx(options.ringOffset[0]) : 0;
         this.tick = 0;
     }
 
@@ -45,12 +50,11 @@ class Rotor {
     fwd(ctx, next) {
         // Take into account that some rotors don't rotate
         const tick = this.turnover ? this.tick : 0;
-        const o = _idx(ctx.value);
-        const i = _mod(o + tick);
-        const c = this.rotor.substr(i, 1);
+        const v = _idx(ctx.value);
+        const i = _mod(v + tick + this.ringOffset);
+        const c = this.rotor.substr(_mod(v + tick), 1);
         const j = _idx(c);
-        const d = _mod(o + j + M - i);
-        ctx.value = _chr(d);
+        ctx.value = _chr(_mod(v + j + M - i));
         next();
     };
 
@@ -63,11 +67,10 @@ class Rotor {
         // Take into account that some rotors don't rotate
         const tick = this.turnover ? this.tick : 0;
         const o = _idx(ctx.value);
-        const i = _mod(o + tick);
+        const i = _mod(o + tick - this.ringOffset);
         const c = _chr(i);
         const j = this.rotor.indexOf(c);
-        const d = _mod(o + j + M - i);
-        ctx.value = _chr(d);
+        ctx.value = _chr(_mod(o + j + M - i));
         next();
     }
 

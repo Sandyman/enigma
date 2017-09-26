@@ -26,7 +26,7 @@ class Enigma {
         // Rotors (left-to-right: r3 | r2 | r1)
         this.r3 = new Rotor({ type: 'I' });
         this.r2 = new Rotor({ type: 'II' });
-        this.r1 = new Rotor({ type: 'III' });
+        this.r1 = new Rotor({ type: 'III', ringOffset: 'B' });
 
         // Rotor controller (signal flows right-to-left)
         this.controller = new Controller();
