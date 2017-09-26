@@ -13,22 +13,7 @@ class Rotor {
 
         this.rotor = Rotors[options.type].sub;
         this.turnover = Rotors[options.type].turnover;
-        this.turnoverListener = options.turnoverListener;
         this.tick = 0;
-    }
-
-    /**
-     * Return index of character in alphabet
-     */
-    static _idx(v) {
-        return v.charCodeAt(0) - 'A'.charCodeAt(0);
-    }
-
-    /**
-     * Return character based on its ordinal value
-     */
-    static _chr(v) {
-        return String.fromCharCode(v + 'A'.charCodeAt(0));
     }
 
     /**
@@ -36,7 +21,9 @@ class Rotor {
      *   C -> B, Z -> Y, A -> Z
      */
     static _dec(v) {
-        return Rotor._chr((Rotor._idx(v) + 25) % 26);
+        const chr = (v) => String.fromCharCode(v + 'A'.charCodeAt(0));
+        const idx = (v) => v.charCodeAt(0) - 'A'.charCodeAt(0);
+        return chr((idx(v) + 25) % 26);
     }
 
     /**
@@ -74,15 +61,17 @@ class Rotor {
     }
 
     /**
+     * Indicate that the ratchet pawl is engaged, which means the next rotor
+     * (to the left of this one) will rotate too.
+     */
+    isLatched() {
+        return this.turnover.indexOf(this.inView()) >= 0;
+    }
+
+    /**
      * Every key press is preceded by a turnover (the rotor rotates to new position).
      */
     onTurnover() {
-        if (this.turnoverListener) {
-            // Determine whether we need to rotate the next rotor as well.
-            if (this.turnover.indexOf(this.inView()) >= 0) {
-                this.turnoverListener();
-            }
-        }
         this.tick = (this.tick + 1) % 26;
         this.rotateByOne();
     }
@@ -94,16 +83,32 @@ class Rotor {
      * - if A == 0, B == 1, Z == 25, then
      *     y(next) := (y + alphabet-length - 1) % alphabet-length, or
      *     y(next) := (y + 25) % 26
-     *   or in other words: rotate forward by 1 equals rotate backward by 25
+     *   or in other words: rotate forward by 1 equals rotate backward by 25.
+     *
+     * Another way to look at this: all we do when a rotor rotates is change
+     * the **mapping** from input to output. So, let's assume B -> F (forward
+     * path). Then, at the next step, B will have moved to the location of A
+     * and F will have moved to the location of E. So, we simply change the
+     * mapping (B->F) to (A->E).
      */
     rotateByOne() {
+        // Turn string into array
         const enc = this.rotor.split('');
+
+        // Get first element (which will be moved to the end)
         const f = enc.shift();
+
+        // Now map each value to its new value (F->E, Z->Y, A->Z),
+        // which is handled by this._dec().
         const r = enc.reduce((memo, value) => {
             memo.push(Rotor._dec(value));
             return memo;
         }, []);
+
+        // Push the original first value onto the array
         r.push(Rotor._dec(f));
+
+        // Turn array back into a string
         this.rotor = r.join('');
     }
 }
