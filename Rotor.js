@@ -2,13 +2,12 @@ const autoBind = require('auto-bind');
 const Rotors = require('./Rotors');
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const A = 'A'.charCodeAt(0);
 const M = alphabet.length; // Modulo value, hence M
 
 // Some convenience functions
 const _chr = (i) => alphabet[i];
-const _idx = (v) => (v.charCodeAt(0) - A);
-const _mod = (v) => (v % M);
+const _idx = (v) => alphabet.indexOf(v);
+const _mod = (v) => ((v + M) % M);
 
 class Rotor {
     /**
@@ -51,10 +50,11 @@ class Rotor {
         // Take into account that some rotors don't rotate
         const tick = this.turnover ? this.tick : 0;
         const v = _idx(ctx.value);
-        const i = _mod(v + tick + this.ringOffset);
-        const c = this.rotor.substr(_mod(v + tick), 1);
+        const i = _mod(v + tick);
+        const c = this.rotor.substr(i, 1);
         const j = _idx(c);
-        ctx.value = _chr(_mod(v + j + M - i));
+        const n = _mod(v + j - i);
+        ctx.value = _chr(n);
         next();
     };
 
@@ -67,10 +67,10 @@ class Rotor {
         // Take into account that some rotors don't rotate
         const tick = this.turnover ? this.tick : 0;
         const o = _idx(ctx.value);
-        const i = _mod(o + tick - this.ringOffset);
+        const i = _mod(o + tick);
         const c = _chr(i);
         const j = this.rotor.indexOf(c);
-        ctx.value = _chr(_mod(o + j + M - i));
+        ctx.value = _chr(_mod(o + j - i));
         next();
     }
 
