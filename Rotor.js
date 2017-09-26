@@ -21,11 +21,14 @@ class Rotor {
      *   C -> B, Z -> Y, A -> Z
      */
     static _dec(v) {
+        // Usually 26 :-)
+        const M = alphabet.length;
+
         // This convenience function maps [A,B,C, ...] -> [0,1,2, ...]
         const idx = (v) => (v.charCodeAt(0) - 'A'.charCodeAt(0));
 
         // Because it's (mod 26), -1 basically equals +25
-        return alphabet[(idx(v) + 25) % 26];
+        return alphabet[(idx(v) + M - 1) % M];
     }
 
     /**
@@ -74,7 +77,7 @@ class Rotor {
      * Every key press is preceded by a turnover (the rotor rotates to new position).
      */
     onTurnover() {
-        this.tick = (this.tick + 1) % 26;
+        this.tick = (this.tick + 1) % alphabet.length;
         this.rotateByOne();
     }
 
