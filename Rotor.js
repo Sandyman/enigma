@@ -76,7 +76,7 @@ class Rotor {
      * @param f
      * @private
      */
-    _encode(ctx, f) {
+    _encdec(ctx, f) {
         // Take into account that some rotors don't rotate
         const offset = this.turnover ? this.wheelSetting : 0;
 
@@ -90,24 +90,24 @@ class Rotor {
     }
 
     /**
-     * The forward path through the rotors
+     * The forward path through the rotors (toward the reflector)
      * @param ctx
      * @param next
      */
     fwd(ctx, next) {
-        const f = n => _idx(this.rotor[n]);
-        this._encode(ctx, f);
+        const enc = n => _idx(this.rotor[n]);
+        this._encdec(ctx, enc);
         next();
     };
 
     /**
-     * The reverse path through the rotors
+     * The reverse path through the rotors (away from the reflector)
      * @param ctx
      * @param next
      */
     rev(ctx, next) {
-        const f = n => this.rotor.indexOf(_chr(n));
-        this._encode(ctx, f);
+        const dec = n => this.rotor.indexOf(_chr(n));
+        this._encdec(ctx, dec);
         next();
     }
 
