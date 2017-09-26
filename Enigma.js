@@ -1,4 +1,5 @@
-const Controller = require('./Middleware');
+const _ = require('underscore');
+const Controller = require('./Controller');
 const Rotor = require('./Rotor');
 
 class Enigma {
@@ -15,9 +16,9 @@ class Enigma {
         this.resultListener = resultListener;
 
         try {
-            this.init(options);
+            this._init(options);
         } catch (e) {
-            console.log(`Oops: ${e}`);
+            console.log(`Oops: ${e.message}`);
         }
     }
 
@@ -26,6 +27,7 @@ class Enigma {
      */
     static defaultOptions() {
         return {
+            machineType: 3,
             rightRingType: 'III',
             middleRingType: 'II',
             leftRingType: 'I',
@@ -38,7 +40,7 @@ class Enigma {
     /**
      * Initialise Enigma. This should become configurable.
      */
-    init(options) {
+    _init(options) {
         // Entry wheel
         this.e = new Rotor({
             type: 'ETW',
@@ -90,7 +92,7 @@ class Enigma {
      * The mechanism is advanced at key press event, but **before** the
      * circuit is closed.
      */
-    tick() {
+    _tick() {
         // Notch on r2 makes r3 turn
         if (this.r2.isLatched()) {
             this.r3.onTurnover();
@@ -117,7 +119,7 @@ class Enigma {
         resultListener = resultListener || this.resultListener;
 
         // The key press originally progressed the wheels, before closing the circuit.
-        this.tick();
+        this._tick();
 
         // Calculate result of "closed circuit"
         this.controller.run([this.context], (err) => {

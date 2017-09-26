@@ -1,4 +1,4 @@
-class Middleware {
+class Controller {
     constructor() {
         this.stack = [];
     }
@@ -25,4 +25,4 @@ class Middleware {
     }
 }
 
-module.exports = Middleware;
+module.exports = Controller;
