@@ -2,6 +2,13 @@ const autoBind = require('auto-bind');
 const Rotors = require('./Rotors');
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const A = 'A'.charCodeAt(0);
+const M = alphabet.length; // Modulo value, hence M
+
+// Some convenience functions
+const _chr = (i) => alphabet[i];
+const _idx = (v) => (v.charCodeAt(0) - A);
+const _mod = (v) => (v % M);
 
 class Rotor {
     /**
@@ -13,6 +20,7 @@ class Rotor {
 
         this.rotor = Rotors[options.type].sub;
         this.turnover = Rotors[options.type].turnover;
+        this.isFixed = !!options.isFixed;
         this.tick = 0;
     }
 
@@ -20,16 +28,6 @@ class Rotor {
      * Return the character preceding the current value, e.g.,
      *   C -> B, Z -> Y, A -> Z
      */
-    static _dec(v) {
-        // Usually 26 :-)
-        const M = alphabet.length;
-
-        // This convenience function maps [A,B,C, ...] -> [0,1,2, ...]
-        const idx = (v) => (v.charCodeAt(0) - 'A'.charCodeAt(0));
-
-        // Because it's (mod 26), -1 basically equals +25
-        return alphabet[(idx(v) + M - 1) % M];
-    }
 
     /**
      * Return the character currently in view for this rotor
@@ -45,10 +43,14 @@ class Rotor {
      * @param next
      */
     fwd(ctx, next) {
-        const v = ctx.value;
-        const i = alphabet.indexOf(v);
+        const tick = this.turnover ? this.tick : 0;
+        const o = _idx(ctx.value);
+        const i = _mod(o + tick);
         const c = this.rotor.substr(i, 1);
-        ctx.value = c;
+        const j = _idx(c);
+        const d = _mod(o + j + M - i);
+        ctx.value = _chr(d);
+        console.log('(F)', tick, this.rotor, o, i, c, j, d, ctx.value);
         next();
     };
 
@@ -58,10 +60,14 @@ class Rotor {
      * @param next
      */
     rev(ctx, next) {
-        const v = ctx.value;
-        const i = this.rotor.indexOf(v);
-        const c = alphabet.substr(i, 1);
-        ctx.value = c;
+        const tick = this.turnover ? this.tick : 0;
+        const o = _idx(ctx.value);
+        const i = _mod(o + tick);
+        const c = _chr(i);
+        const j = this.rotor.indexOf(c);
+        const d = _mod(j + M - i);
+        ctx.value = _chr(d);
+        console.log('(R)', o, i, c, j, d, ctx.value);
         next();
     }
 
@@ -77,44 +83,7 @@ class Rotor {
      * Every key press is preceded by a turnover (the rotor rotates to new position).
      */
     onTurnover() {
-        this.tick = (this.tick + 1) % alphabet.length;
-        this.rotateByOne();
-    }
-
-    /**
-     * Rotate alphabet by means of a rotor means two things:
-     * - all letters move forward (to the front) one position
-     * - every letter becomes its predecessor (B -> A, Q -> P, A -> Z)
-     * - if A == 0, B == 1, Z == 25, then
-     *     y(next) := (y + alphabet-length - 1) % alphabet-length, or
-     *     y(next) := (y + 25) % 26
-     *   or in other words: rotate forward by 1 equals rotate backward by 25.
-     *
-     * Another way to look at this: all we do when a rotor rotates is change
-     * the **mapping** from input to output. So, let's assume B -> F (forward
-     * path). Then, at the next step, B will have moved to the location of A
-     * and F will have moved to the location of E. So, we simply change the
-     * mapping (B->F) to (A->E).
-     */
-    rotateByOne() {
-        // Turn string into array
-        const enc = this.rotor.split('');
-
-        // Get first element (which will be moved to the end)
-        const f = enc.shift();
-
-        // Now map each value to its new value (F->E, Z->Y, A->Z),
-        // which is handled by this._dec().
-        const r = enc.reduce((memo, value) => {
-            memo.push(Rotor._dec(value));
-            return memo;
-        }, []);
-
-        // Push the original first value onto the array
-        r.push(Rotor._dec(f));
-
-        // Turn array back into a string
-        this.rotor = r.join('');
+        this.tick = _mod(this.tick + 1);
     }
 }
 
