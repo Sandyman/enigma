@@ -43,6 +43,7 @@ class Rotor {
      * @param next
      */
     fwd(ctx, next) {
+        // Take into account that some rotors don't rotate
         const tick = this.turnover ? this.tick : 0;
         const o = _idx(ctx.value);
         const i = _mod(o + tick);
@@ -50,7 +51,6 @@ class Rotor {
         const j = _idx(c);
         const d = _mod(o + j + M - i);
         ctx.value = _chr(d);
-        console.log('(F)', tick, this.rotor, o, i, c, j, d, ctx.value);
         next();
     };
 
@@ -60,14 +60,14 @@ class Rotor {
      * @param next
      */
     rev(ctx, next) {
+        // Take into account that some rotors don't rotate
         const tick = this.turnover ? this.tick : 0;
         const o = _idx(ctx.value);
         const i = _mod(o + tick);
         const c = _chr(i);
         const j = this.rotor.indexOf(c);
-        const d = _mod(j + M - i);
+        const d = _mod(o + j + M - i);
         ctx.value = _chr(d);
-        console.log('(R)', o, i, c, j, d, ctx.value);
         next();
     }
 
