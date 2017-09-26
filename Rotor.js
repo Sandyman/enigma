@@ -17,21 +17,49 @@ class Rotor {
     constructor(options) {
         autoBind(this);
 
-        if (!Rotors[options.type]) {
-            throw new Error(`Unknown Rotor Type '${options.type}'!`);
-        }
+        // This might throw!
+        Rotor._checkOptions(options);
 
         this.rotor = Rotors[options.type].sub;
         this.turnover = Rotors[options.type].turnover;
         this.isFixed = !!options.isFixed;
-        this.ringOffset = options.ringOffset ? _idx(options.ringOffset[0]) : 0;
-        this.wheelSetting = options.wheelSetting ? _idx(options.wheelSetting) : 0;
+        this.ringOffset = options.ringOffset;
+        this.wheelSetting = options.wheelSetting;
     }
 
     /**
-     * Return the character preceding the current value, e.g.,
-     *   C -> B, Z -> Y, A -> Z
+     * Validate options. Might sanitise input.
+     * @param options
+     * @private
      */
+    static _checkOptions(options) {
+        // Check whether a valid rotor type is passed in
+        if (!Rotors[options.type]) {
+            throw new Error(`Unknown Rotor Type '${options.type}'!`);
+        }
+
+        // Check and sanitise the ring offset (ringstellung)
+        if (options.ringOffset) {
+            options.ringOffset = options.ringOffset[0].toUpperCase();
+            if (_idx(options.ringOffset) < 0) {
+                throw new Error(`Invalid ring offset ${options.ringOffset}!`);
+            }
+            options.ringOffset = _idx(options.ringOffset);
+        } else {
+            options.ringOffset = 0;
+        }
+
+        // Check and sanitise the wheel setting (grundstellung)
+        if (options.wheelSetting) {
+            options.wheelSetting = options.wheelSetting[0].toUpperCase();
+            if (_idx(options.wheelSetting) < 0) {
+                throw new Error(`Invalid wheel setting ${options.wheelSetting}!`);
+            }
+            options.wheelSetting = _idx(options.wheelSetting);
+        } else {
+            options.wheelSetting = 0;
+        }
+    }
 
     /**
      * Return the character currently in view for this rotor
