@@ -27,13 +27,21 @@ class Enigma {
      */
     static defaultOptions() {
         return {
-            machineType: 3,
-            rightRingType: 'III',
-            middleRingType: 'II',
-            leftRingType: 'I',
+            type: 3,
+            rotors: [{
+                type: 'III',
+                ringOffset: 'A',
+                wheelSetting: 'A',
+            }, {
+                type: 'II',
+                ringOffset: 'A',
+                wheelSetting: 'A',
+            }, {
+                type: 'I',
+                ringOffset: 'A',
+                wheelSetting: 'A',
+            }],
             reflectorType: 'UKW-B',
-            ringOffset: 'AAA',
-            wheelSetting: 'AAA',
         }
     }
 
@@ -41,8 +49,33 @@ class Enigma {
      * Initialise Enigma. This should become configurable.
      */
     _init(options) {
+        this.type = options.type;
+
+        // We only allow enigma M3 and M4
+        if (this.type !== 3 && this.type !== 4) {
+            throw new Error(`Invalid machine type '${options.type}' provided!`);
+        }
+
+        // Check that we have the correct number of rotors in the options
+        if (options.rotors.length !== this.type) {
+            throw new Error(`Invalid number of rotors provided (should be ${this.type})!`);
+        }
+
+        // Rotor controller (signal flows right-to-left)
+        this.controller = new Controller();
+
+        // Create the rotors from the options
+        const rotors = options.rotors.map(r => new Rotor({
+            type: r.type,
+            ringOffset: r.ringOffset,
+            wheelSetting: r.wheelSetting,
+        }));
+
+        // Keep the rotors for later use
+        this.rotors = Object.assign([], rotors);
+
         // Entry wheel
-        this.e = new Rotor({
+        this.ew = new Rotor({
             type: 'ETW',
         });
 
@@ -51,41 +84,19 @@ class Enigma {
             type: options.reflectorType,
         });
 
-        // Rotors (left-to-right: r3 | r2 | r1)
-        this.r1 = new Rotor({
-            type: options.rightRingType,
-            ringOffset: options.ringOffset[2],
-            wheelSetting: options.wheelSetting[2],
-        });
-        this.r2 = new Rotor({
-            type: options.middleRingType,
-            ringOffset: options.ringOffset[1],
-            wheelSetting: options.wheelSetting[1],
-        });
-        this.r3 = new Rotor({
-            type: options.leftRingType,
-            ringOffset: options.ringOffset[0],
-            wheelSetting: options.wheelSetting[0],
-        });
-
-        // Rotor controller (signal flows right-to-left)
-        this.controller = new Controller();
-        this.controller.use(this.e.fwd);
-        this.controller.use(this.r1.fwd);
-        this.controller.use(this.r2.fwd);
-        this.controller.use(this.r3.fwd);
+        // Add the rotors to the controller
+        this.controller.use(this.ew.fwd);
+        rotors.forEach(r => this.controller.use(r.fwd));
         this.controller.use(this.rr.fwd);
-        this.controller.use(this.r3.rev);
-        this.controller.use(this.r2.rev);
-        this.controller.use(this.r1.rev);
-        this.controller.use(this.e.rev);
+        rotors.reverse().forEach(r => this.controller.use(r.rev));
+        this.controller.use(this.ew.rev);
     }
 
     /**
      * Return the values of the rotors in view
      */
     inView() {
-        return `${this.r3.inView()}${this.r2.inView()}${this.r1.inView()}`;
+        return this.rotors.map(r => r.inView()).reverse().join('');
     }
 
     /**
@@ -94,20 +105,20 @@ class Enigma {
      */
     _tick() {
         // Notch on r2 makes r3 turn
-        if (this.r2.isLatched()) {
-            this.r3.onTurnover();
+        if (this.rotors[1].isLatched()) {
+            this.rotors[2].onTurnover();
 
             // This handles the "double stepping"
-            this.r2.onTurnover();
+            this.rotors[1].onTurnover();
         }
 
         // Notch on r1 makes r2 turns
-        if (this.r1.isLatched()) {
-            this.r2.onTurnover();
+        if (this.rotors[0].isLatched()) {
+            this.rotors[1].onTurnover();
         }
 
-        // rotor 1 always turns over
-        this.r1.onTurnover();
+        // Rotor 1 always turns over
+        this.rotors[0].onTurnover();
     }
 
     /**
