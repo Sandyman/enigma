@@ -31,15 +31,15 @@ class Enigma {
             type: 3,
             rotors: [{
                 type: 'III',
-                ringSetting: 'A',
+                ringSetting: 1,
                 wheelSetting: 'A',
             }, {
                 type: 'II',
-                ringSetting: 'A',
+                ringSetting: 1,
                 wheelSetting: 'A',
             }, {
                 type: 'I',
-                ringSetting: 'A',
+                ringSetting: 1,
                 wheelSetting: 'A',
             }],
             reflectorType: 'B',

@@ -23,7 +23,7 @@ class Rotor {
         this.rotor = Rotors[options.type].sub;
         this.turnover = Rotors[options.type].turnover;
         this.isFixed = !!options.isFixed;
-        this.ringSetting = options.ringSetting;
+        this.ringSetting = (options.ringSetting || 1) - 1;
         this.wheelSetting = options.wheelSetting;
     }
 
@@ -38,15 +38,15 @@ class Rotor {
             throw new Error(`Unknown Rotor Type '${options.type}'!`);
         }
 
-        // Check and sanitise the ring offset (ringstellung)
+        // Check the ringSetting (ringstellung)
         if (options.ringSetting) {
-            options.ringSetting = options.ringSetting[0].toUpperCase();
-            if (_idx(options.ringSetting) < 0) {
-                throw new Error(`Invalid ring offset ${options.ringSetting}!`);
+            if (typeof options.ringSetting !== 'number') {
+                throw new Error('ringSetting must be a number.');
             }
-            options.ringSetting = _idx(options.ringSetting);
-        } else {
-            options.ringSetting = 0;
+
+            if (options.ringSetting < 1 || options.ringSetting > 26) {
+                throw new Error('ringSetting must be between 1 and 26.');
+            }
         }
 
         // Check and sanitise the wheel setting (grundstellung)
