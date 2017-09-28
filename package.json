@@ -2,7 +2,7 @@
   "name": "enigma",
   "version": "1.0.0",
   "description": "Simple Enigma M3/M4 simulator. Work in progress.",
-  "main": "index.js",
+  "main": "Enigma.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
