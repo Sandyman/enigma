@@ -41,7 +41,7 @@ class Enigma {
                 ringOffset: 'A',
                 wheelSetting: 'A',
             }],
-            reflectorType: 'UKW-B',
+            reflectorType: 'B',
         }
     }
 
@@ -60,6 +60,14 @@ class Enigma {
         if (options.rotors.length !== this.type) {
             throw new Error(`Invalid number of rotors provided (should be ${this.type})!`);
         }
+
+        // Check that a valid reflector type was provided
+        if ('BC'.indexOf(options.reflectorType) < 0) {
+            throw new Error('Invalid reflector type provided (should be B or C).');
+        }
+
+        // For M4, we need the tiny reflector wheels (-T)
+        const reflectorType = `UKW-${options.reflectorType}${this.type === 3 ? '' : '-T'}`;
 
         // Rotor controller (signal flows right-to-left)
         this.controller = new Controller();
@@ -80,9 +88,7 @@ class Enigma {
         });
 
         // Reflector
-        this.rr = new Rotor({
-            type: options.reflectorType,
-        });
+        this.rr = new Rotor({ type: reflectorType });
 
         // Add the rotors to the controller
         this.controller.use(this.ew.fwd);
