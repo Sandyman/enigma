@@ -18,7 +18,9 @@ class Enigma {
         try {
             this._init(options);
         } catch (e) {
-            console.log(`Oops: ${e.message}`);
+            console.log(`Please check your config:\n${JSON.stringify(options, null, 3)}`);
+            console.log(e.message);
+            process.exit(1);
         }
     }
 
