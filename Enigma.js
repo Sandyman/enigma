@@ -63,6 +63,12 @@ class Enigma {
             throw new Error(`Invalid number of rotors provided (should be ${this.type})!`);
         }
 
+        if (this.type === 4) {
+            if (options.rotor[0] !== 'beta' && options.rotor[0] !== 'gamma') {
+                throw new Error('Left ring in M4 must be beta or gamma.');
+            }
+        }
+
         // Check that no rotor is used twice
         const u = _.uniq(options.rotors, x => x.type);
         if (u.length !== options.rotors.length) {
