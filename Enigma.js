@@ -31,15 +31,15 @@ class Enigma {
             type: 3,
             rotors: [{
                 type: 'III',
-                ringOffset: 'A',
+                ringSetting: 'A',
                 wheelSetting: 'A',
             }, {
                 type: 'II',
-                ringOffset: 'A',
+                ringSetting: 'A',
                 wheelSetting: 'A',
             }, {
                 type: 'I',
-                ringOffset: 'A',
+                ringSetting: 'A',
                 wheelSetting: 'A',
             }],
             reflectorType: 'B',
@@ -83,7 +83,7 @@ class Enigma {
         // Create the rotors from the options
         const rotors = options.rotors.map(r => new Rotor({
             type: r.type,
-            ringOffset: r.ringOffset,
+            ringSetting: r.ringSetting,
             wheelSetting: r.wheelSetting,
         }));
 
