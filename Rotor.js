@@ -24,7 +24,7 @@ class Rotor {
         this.turnover = Rotors[options.type].turnover;
         this.isFixed = !!options.isFixed;
         this.ringSetting = (options.ringSetting || 1) - 1;
-        this.wheelSetting = options.wheelSetting;
+        this.rotorOffset = options.rotorOffset;
     }
 
     /**
@@ -50,14 +50,14 @@ class Rotor {
         }
 
         // Check and sanitise the wheel setting (grundstellung)
-        if (options.wheelSetting) {
-            options.wheelSetting = options.wheelSetting[0].toUpperCase();
-            if (_idx(options.wheelSetting) < 0) {
-                throw new Error(`Invalid wheel setting ${options.wheelSetting}!`);
+        if (options.rotorOffset) {
+            options.rotorOffset = options.rotorOffset[0].toUpperCase();
+            if (_idx(options.rotorOffset) < 0) {
+                throw new Error(`Invalid wheel setting ${options.rotorOffset}!`);
             }
-            options.wheelSetting = _idx(options.wheelSetting);
+            options.rotorOffset = _idx(options.rotorOffset);
         } else {
-            options.wheelSetting = 0;
+            options.rotorOffset = 0;
         }
     }
 
@@ -66,7 +66,7 @@ class Rotor {
      * @returns {string}
      */
     inView() {
-        return alphabet.substr(this.wheelSetting, 1);
+        return alphabet.substr(this.rotorOffset, 1);
     }
 
     /**
@@ -78,7 +78,7 @@ class Rotor {
      */
     _encdec(ctx, f) {
         // Take into account that some rotors don't rotate
-        const offset = this.turnover ? this.wheelSetting : 0;
+        const offset = this.turnover ? this.rotorOffset : 0;
 
         let n = _idx(ctx.value);
         n = _mod(n - this.ringSetting);
@@ -123,7 +123,7 @@ class Rotor {
      * Every key press is preceded by a turnover (the rotor rotates to new position).
      */
     onTurnover() {
-        this.wheelSetting = _mod(this.wheelSetting + 1);
+        this.rotorOffset = _mod(this.rotorOffset + 1);
     }
 }
 

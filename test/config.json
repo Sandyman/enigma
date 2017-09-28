@@ -3,15 +3,15 @@
   "rotors": [{
     "type": "III",
     "ringSetting": 1,
-    "wheelSetting": "A"
+    "rotorOffset": "A"
   }, {
     "type": "II",
     "ringSetting": 1,
-    "wheelSetting": "A"
+    "rotorOffset": "A"
   }, {
     "type": "I",
     "ringSetting": 1,
-    "wheelSetting": "A"
+    "rotorOffset": "A"
   }],
   "reflectorType": "B"
 }

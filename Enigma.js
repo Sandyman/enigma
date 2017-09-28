@@ -32,15 +32,15 @@ class Enigma {
             rotors: [{
                 type: 'III',
                 ringSetting: 1,
-                wheelSetting: 'A',
+                rotorOffset: 'A',
             }, {
                 type: 'II',
                 ringSetting: 1,
-                wheelSetting: 'A',
+                rotorOffset: 'A',
             }, {
                 type: 'I',
                 ringSetting: 1,
-                wheelSetting: 'A',
+                rotorOffset: 'A',
             }],
             reflectorType: 'B',
         }
@@ -84,7 +84,7 @@ class Enigma {
         const rotors = options.rotors.map(r => new Rotor({
             type: r.type,
             ringSetting: r.ringSetting,
-            wheelSetting: r.wheelSetting,
+            rotorOffset: r.rotorOffset,
         }));
 
         // Keep the rotors for later use
