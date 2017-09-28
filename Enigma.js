@@ -8,12 +8,8 @@ class Enigma {
      * onKey() (see below). If you pass in a resultListener though onKey(),
      * it will override the one passed in here.
      */
-    constructor(options, resultListener) {
-        if (typeof options === 'function') {
-            resultListener = options;
-            options = Object.assign({}, Enigma.defaultOptions());
-        }
-        this.resultListener = resultListener;
+    constructor(options) {
+        this.options = Object.assign({}, options || Enigma.defaultOptions());
 
         try {
             this._init(options);
@@ -53,7 +49,8 @@ class Enigma {
     /**
      * Initialise Enigma.
      */
-    _init(options) {
+    _init() {
+        const options = this.options;
         this.type = options.type;
 
         // We only allow enigma M3 and M4
@@ -139,12 +136,22 @@ class Enigma {
     }
 
     /**
+     * Reset the configuration
+     */
+    reset() {
+        this._init(this.options);
+    }
+
+    /**
      * Called when a key is pressed. The resultListener passed in here overrides
      * the one passed in through the constructor.
      */
     onKey(key, resultListener) {
+        if (!key || !resultListener || key.length !== 1) {
+            throw new Error('Invalid use of onKey()');
+        }
+
         this.context = { value: key };
-        resultListener = resultListener || this.resultListener;
 
         // The key press originally progressed the wheels, before closing the circuit.
         this._tick();
@@ -157,6 +164,40 @@ class Enigma {
                 resultListener(this.context.value);
             }
         });
+    }
+
+    /**
+     * Encode an entire message character by character
+     * @param msg
+     * @param resultListener
+     */
+    onMessage(msg, resultListener) {
+        if (!msg || !resultListener || msg.length < 1) {
+            throw new Error('Invalid use of onMessage()');
+        }
+
+        /**
+         * To contain the encoded string
+         */
+        const result = [];
+
+        /**
+         * Encode letters until we're done
+         */
+        const encodeLetters = (i) => {
+            // Are we done yet?
+            if (i === msg.length) return resultListener(result.join(''));
+
+            this.onKey(msg.substr(i, 1), x => {
+                result.push(x);
+                return encodeLetters(i + 1);
+            });
+        };
+
+        /**
+         * Encode recursively
+         */
+        encodeLetters(0);
     }
 }
 
