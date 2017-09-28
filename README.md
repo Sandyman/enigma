@@ -28,7 +28,7 @@ The default configuration is as follows:
 {
   "type": 3,
   "rotors": [{
-    "type": "III",
+    "type": "I",
     "ringOffset": "A",
     "wheelSetting": "A"
   }, {
@@ -36,7 +36,7 @@ The default configuration is as follows:
     "ringOffset": "A",
     "wheelSetting": "A"
   }, {
-    "type": "I",
+    "type": "III",
     "ringOffset": "A",
     "wheelSetting": "A"
   }],
@@ -46,7 +46,7 @@ The default configuration is as follows:
 
 This is also available as a JSON file inside the `test` directory.
 
-The rotors in the array are from right to left. The `type` defines which Enigma you want to use: 3 for M3, 4 for M4. Upon initalisation, the number of rotors will be checked. You need to pass in 3 rotors for an M3 and 4 rotors for an M4. However, independent of that choice, the first rotor in the array is always the right one as seen by the operator.
+The rotors in the array are from LEFT to RIGHT. The `type` defines which Enigma you want to use: 3 for M3, 4 for M4. Upon initalisation, the number of rotors will be checked. You need to pass in 3 rotors for an M3 and 4 rotors for an M4. However, independent of that choice, the first rotor in the array is always the LEFT one as seen by the operator.
 
 The rotors that are allowed are I - VIII. You cannot use the same rotor twice in a configuration. The reflector type is either B or C. Different reflectors are used for M3 and M4, but this is done automatically. You only have to configure B or C.
 

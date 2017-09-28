@@ -30,7 +30,7 @@ class Enigma {
         return {
             type: 3,
             rotors: [{
-                type: 'III',
+                type: 'I',
                 ringSetting: 1,
                 rotorOffset: 'A',
             }, {
@@ -38,7 +38,7 @@ class Enigma {
                 ringSetting: 1,
                 rotorOffset: 'A',
             }, {
-                type: 'I',
+                type: 'III',
                 ringSetting: 1,
                 rotorOffset: 'A',
             }],
@@ -88,7 +88,7 @@ class Enigma {
         }));
 
         // Keep the rotors for later use
-        this.rotors = Object.assign([], rotors);
+        this.rotors = Object.assign([], rotors.reverse());
 
         // Entry wheel
         this.ew = new Rotor({

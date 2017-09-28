@@ -1,7 +1,7 @@
 {
   "type": 3,
   "rotors": [{
-    "type": "III",
+    "type": "I",
     "ringSetting": 1,
     "rotorOffset": "A"
   }, {
@@ -9,7 +9,7 @@
     "ringSetting": 1,
     "rotorOffset": "A"
   }, {
-    "type": "I",
+    "type": "III",
     "ringSetting": 1,
     "rotorOffset": "A"
   }],
