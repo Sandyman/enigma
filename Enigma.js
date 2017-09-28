@@ -1,5 +1,6 @@
 const _ = require('underscore');
 const Controller = require('./Controller');
+const Plugboard = require('./Plugboard');
 const Rotor = require('./Rotor');
 
 class Enigma {
