@@ -151,7 +151,7 @@ class Enigma {
             throw new Error('Invalid use of onKey()');
         }
 
-        this.context = { value: key };
+        this.context = { value: key.toUpperCase() };
 
         // The key press originally progressed the wheels, before closing the circuit.
         this._tick();
