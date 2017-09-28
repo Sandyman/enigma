@@ -18,9 +18,12 @@ class Enigma {
         try {
             this._init(options);
         } catch (e) {
-            console.log(`Please check your config:\n${JSON.stringify(options, null, 3)}`);
-            console.log(e.message);
-            process.exit(1);
+            const ers = [
+                'Oops, something went wrong! Please check your config:',
+                JSON.stringify(options, null, 3),
+                e.message
+            ];
+            throw new Error(ers.join('\n'));
         }
     }
 
