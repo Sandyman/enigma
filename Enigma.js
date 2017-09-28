@@ -51,7 +51,7 @@ class Enigma {
     }
 
     /**
-     * Initialise Enigma. This should become configurable.
+     * Initialise Enigma.
      */
     _init(options) {
         this.type = options.type;
@@ -64,6 +64,12 @@ class Enigma {
         // Check that we have the correct number of rotors in the options
         if (options.rotors.length !== this.type) {
             throw new Error(`Invalid number of rotors provided (should be ${this.type})!`);
+        }
+
+        // Check that no rotor is used twice
+        const u = _.uniq(options.rotors, x => x.type);
+        if (u.length !== options.rotors.length) {
+            throw new Error('You cannot use the same rotor twice');
         }
 
         // Check that a valid reflector type was provided
