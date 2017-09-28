@@ -1,0 +1,17 @@
+{
+  "type": 3,
+  "rotors": [{
+    "type": "III",
+    "ringOffset": "A",
+    "wheelSetting": "A"
+  }, {
+    "type": "II",
+    "ringOffset": "A",
+    "wheelSetting": "A"
+  }, {
+    "type": "I",
+    "ringOffset": "A",
+    "wheelSetting": "A"
+  }],
+  "reflectorType": "UKW-B"
+}
