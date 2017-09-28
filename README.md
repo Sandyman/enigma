@@ -63,16 +63,14 @@ The rotors that are allowed are I - VIII. You cannot use the same rotor twice in
 `onKey(c, resultListener)`
 
 `c` - a character that needs to be encoded. Assumed to be a string with length of 1.
-`resultListener` - a callback function that takes a string as parameter (the encoded input).
-
-If you pass in a `resultListener` here, the one passed in the constructor will be overridden. 
+`resultListener` - a callback function that takes a string as parameter (the encoded input character).
 
 #### Encode an entire message
 
 `onMessage(msg, resultListener)`
 
 `msg` - a message that needs to be encoded. May not be empty.
-`resultListener` - a callback function that takes a string as parameter (the encoded input).
+`resultListener` - a callback function that takes a string as parameter (the encoded input message).
 
 #### Reinitialise the Enigma
 
