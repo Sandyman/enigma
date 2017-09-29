@@ -17,9 +17,6 @@ class Rotor {
     constructor(options) {
         autoBind(this);
 
-        // This might throw!
-        Rotor._checkOptions(options);
-
         this.rotor = Rotors[options.type].sub;
         this.turnover = Rotors[options.type].turnover;
         this.isFixed = !!options.isFixed;
@@ -30,22 +27,21 @@ class Rotor {
     /**
      * Validate options. Might sanitise input.
      * @param options
-     * @private
      */
-    static _checkOptions(options) {
+    static checkOptions(options) {
         // Check whether a valid rotor type is passed in
         if (!Rotors[options.type]) {
-            throw new Error(`Unknown Rotor Type '${options.type}'!`);
+            throw new Error(`Unknown Rotor Type '${options.type}'.`);
         }
 
         // Check the ringSetting (ringstellung)
         if (options.ringSetting) {
             if (typeof options.ringSetting !== 'number') {
-                throw new Error('ringSetting must be a number.');
+                throw new Error('Ring setting must be a number.');
             }
 
             if (options.ringSetting < 1 || options.ringSetting > 26) {
-                throw new Error('ringSetting must be between 1 and 26.');
+                throw new Error('Ring setting must be between 1 and 26.');
             }
         }
 
@@ -53,7 +49,7 @@ class Rotor {
         if (options.rotorOffset) {
             options.rotorOffset = options.rotorOffset[0].toUpperCase();
             if (_idx(options.rotorOffset) < 0) {
-                throw new Error(`Invalid wheel setting ${options.rotorOffset}!`);
+                throw new Error(`Invalid rotor offset ${options.rotorOffset}.`);
             }
             options.rotorOffset = _idx(options.rotorOffset);
         } else {

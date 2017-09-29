@@ -59,11 +59,11 @@ const Rotors = {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
         sub: 'FVPJIAOYEDRZXWGCTKUQSBNMHL',
     },
-    'UKW-B-T': {
+    'UKW-b': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
         sub: 'ENKQAUYWJICOPBLMDXZVFTHRGS',
     },
-    'UKW-C-T': {
+    'UKW-c': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
         sub: 'RDOBJNTKVEHMLFCWZAXGYIPSUQ',
     },

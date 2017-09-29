@@ -12,15 +12,18 @@ class Enigma {
         this.options = Object.assign({}, options || Enigma.defaultOptions());
 
         try {
-            this._init(options);
+            Enigma._checkOptions(this.options);
         } catch (e) {
             const ers = [
                 'Oops, something went wrong! Please check your config:',
-                JSON.stringify(options, null, 3),
+                JSON.stringify(this.options, null, 3),
                 e.message
             ];
             throw new Error(ers.join('\n'));
         }
+
+        // Initialise machine
+        this._init();
     }
 
     /**
@@ -47,23 +50,22 @@ class Enigma {
     }
 
     /**
-     * Initialise Enigma.
+     * Check options. Throw error if something out of order.
+     * @param options
+     * @private
      */
-    _init() {
-        const options = this.options;
-        this.type = options.type;
-
+    static _checkOptions(options) {
         // We only allow enigma M3 and M4
-        if (this.type !== 3 && this.type !== 4) {
-            throw new Error(`Invalid machine type '${options.type}' provided!`);
+        if (options.type !== 3 && options.type !== 4) {
+            throw new Error(`Invalid machine type '${options.type}' provided.`);
         }
 
         // Check that we have the correct number of rotors in the options
-        if (options.rotors.length !== this.type) {
-            throw new Error(`Invalid number of rotors provided (should be ${this.type})!`);
+        if (options.rotors.length !== options.type) {
+            throw new Error(`Invalid number of rotors provided (should be ${options.type}).`);
         }
 
-        if (this.type === 4) {
+        if (options.type === 4) {
             if (options.rotor[0] !== 'beta' && options.rotor[0] !== 'gamma') {
                 throw new Error('Left ring in M4 must be beta or gamma.');
             }
@@ -72,7 +74,7 @@ class Enigma {
         // Check that no rotor is used twice
         const u = _.uniq(options.rotors, x => x.type);
         if (u.length !== options.rotors.length) {
-            throw new Error('You cannot use the same rotor twice');
+            throw new Error('You cannot use the same rotor twice.');
         }
 
         // Check that a valid reflector type was provided
@@ -80,8 +82,20 @@ class Enigma {
             throw new Error('Invalid reflector type provided (should be B or C).');
         }
 
-        // For M4, we need the tiny reflector wheels (-T)
-        const reflectorType = `UKW-${options.reflectorType}${this.type === 3 ? '' : '-T'}`;
+        // Finally check the options for the rotors
+        options.rotors.forEach(r => Rotor.checkOptions(r));
+    }
+
+    /**
+     * Initialise Enigma.
+     */
+    _init() {
+        const options = this.options;
+        this.type = options.type;
+
+        // For M4, we need the tiny reflector wheels (b/c)
+        const subType = this.type === 3 ? options.reflectorType : options.reflectorType.toLowerCase();
+        const reflectorType = `UKW-${subType}`;
 
         // Create the rotors from the options
         const rotors = options.rotors.map(r => new Rotor({
@@ -90,10 +104,10 @@ class Enigma {
             rotorOffset: r.rotorOffset,
         }));
 
-        // Keep the rotors for later use. Please mind the reverse here.
-        // This is because the signal flow if right-to-left, but we
-        // pass in the rotors left-to-right, which is also how it would
-        // be viewed on an actual Enigma machine.
+        // Keep the rotors for later use. Please mind the reverse() call here.
+        // This is because the signal flow if right-to-left, but we pass in
+        // the rotors left-to-right, which is also how it would be viewed on
+        // an actual Enigma machine.
         this.rotors = Object.assign([], rotors.reverse());
 
         // Entry wheel
@@ -151,7 +165,7 @@ class Enigma {
      * Reset the configuration
      */
     reset() {
-        this._init(this.options);
+        this._init();
     }
 
     /**
@@ -163,7 +177,7 @@ class Enigma {
             throw new Error('Invalid use of onKey()');
         }
 
-        // The key press originally progressed the wheels, before closing the circuit.
+        // The key press originally progressed the wheel(s), before closing the circuit.
         this._tick();
 
         // Run the machine logic
@@ -181,16 +195,8 @@ class Enigma {
             throw new Error('Invalid use of onMessage()');
         }
 
-        /**
-         * To contain the encoded string
-         */
-        const result = [];
-
-        let i = 0;
-        while (i < msg.length) {
-            result.push(this.onKey(msg[i++]));
-        }
-        return result.join('');
+        // Simulate key presses for all characters in the message
+        return msg.split('').map(x => this.onKey(x)).join('');
     }
 }
 
