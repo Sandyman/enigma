@@ -10,12 +10,21 @@ try {
         const r = enigma.onKey('A');
         results.push(r);
     }
-    assert.equal(results.join(''), 'BDZGOWCXLTKSBTMCDLPBMUQOFX', 'Unexpected result');
+    const expected = 'BDZGOWCXLTKSBTMCDLPBMUQOFX';
+    assert.equal(
+        results.join(''),
+        expected,
+        `Expected ${expected},\n     got ${results.join('')}`
+    );
 
     enigma.reset();
 
     const result = enigma.onMessage('AAAAAAAAAAAAAAAAAAAAAAAAAA');
-    assert.equal(result, 'BDZGOWCXLTKSBTMCDLPBMUQOFX', 'Unexpected result');
+    assert.equal(
+        result,
+        expected,
+        `Expected ${expected},\n     got ${result}`
+    );
 } catch (e) {
     console.log(e.message);
 }
