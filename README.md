@@ -1,6 +1,6 @@
 # Enigma simulator
 
-This is my attempt of making a simple Enigma simulator. I've looked extensively at lots of web pages, but mostly Wikipedia.
+This is my attempt at making a simple Enigma simulator. I've looked extensively at lots of web pages, but mostly Wikipedia.
 
 I have focussed on functionality, so this simulator behaves as a proper Enigma M3/M4. This includes the "double stepping", which was probably unintended in the original device.
 
@@ -28,16 +28,16 @@ The default configuration is as follows:
   "type": 3,
   "rotors": [{
     "type": "I",
-    "ringOffset": "A",
-    "wheelSetting": "A"
+    "ringSetting": 1,
+    "rotorOffset": "A"
   }, {
     "type": "II",
-    "ringOffset": "A",
-    "wheelSetting": "A"
+    "ringSetting": 1,
+    "rotorOffset": "A"
   }, {
     "type": "III",
-    "ringOffset": "A",
-    "wheelSetting": "A"
+    "ringSetting": 1,
+    "rotorOffset": "A"
   }],
   "reflectorType": "B"
 }
