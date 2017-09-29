@@ -12,6 +12,7 @@ class Enigma {
         this.options = Object.assign({}, options || Enigma.defaultOptions());
 
         try {
+            // Check options, obviously
             Enigma._checkOptions(this.options);
         } catch (e) {
             const ers = [
@@ -46,6 +47,7 @@ class Enigma {
                 rotorOffset: 'A',
             }],
             reflectorType: 'B',
+            plugBoard: [],
         }
     }
 
@@ -81,6 +83,9 @@ class Enigma {
         if ('BC'.indexOf(options.reflectorType) < 0) {
             throw new Error('Invalid reflector type provided (should be B or C).');
         }
+
+        // Check plug board options
+        Plugboard.checkOptions(options.plugBoard);
 
         // Finally check the options for the rotors
         options.rotors.forEach(r => Rotor.checkOptions(r));
@@ -118,11 +123,15 @@ class Enigma {
         // Reflector
         this.rr = new Rotor({ type: reflectorType });
 
+        // Plugboard
+        this.plugBoard = new Plugboard(this.options.plugBoard);
+
         // The controller holds the rotors
         this.controller = [];
 
         // Add the rotors to the controller
         // Forward path
+        this.controller.push(this.plugBoard.fwd);
         this.controller.push(this.ew.fwd);
         rotors.forEach(r => this.controller.push(r.fwd));
         // Reverse rotor
@@ -130,6 +139,7 @@ class Enigma {
         // Reverse path
         rotors.reverse().forEach(r => this.controller.push(r.rev));
         this.controller.push(this.ew.rev);
+        this.controller.push(this.plugBoard.rev);
     }
 
     /**
