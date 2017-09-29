@@ -28,26 +28,26 @@ const Rotors = {
     },
     'VI': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        sub: 'BDFHJLCPRTXVZNYEIWGAKMUSQO',
+        sub: 'JPGVOUMFYQBENHZRDKASXLICTW',
         turnover: 'ZM',
     },
     'VII': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        sub: 'ESOVPZJAYQUIRHXLNFTGKDCMWB',
+        sub: 'NZJHGRCXMYSWBOUFAIVLPEKQDT',
         turnover: 'ZM',
     },
     'VIII': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        sub: 'VZBRGITYUPSDNHLXAWMJQOFECK',
+        sub: 'FKQHTLXOCBJSPDZRAMEWNIUYGV',
         turnover: 'ZM',
     },
     'beta': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        sub: 'ESOVPZJAYQUIRHXLNFTGKDCMWB',
+        sub: 'LEYJVCNIXWPBQMDRTAKZGFUHOS',
     },
     'gamma': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        sub: 'VZBRGITYUPSDNHLXAWMJQOFECK',
+        sub: 'FSOKANUERHMBTIYCWLQPZXVGJD',
     },
     'UKW-B': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
