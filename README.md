@@ -9,7 +9,7 @@ I have focussed on functionality, so this simulator behaves as a proper Enigma M
 ```javascript
 const Enigma = require('enigma');
 
-// Initalise a new Enigma object.
+// Initialise a new Enigma object.
 const enigma = new Enigma();
 
 // Now "press" a key and show the result
