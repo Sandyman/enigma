@@ -13,5 +13,6 @@
     "ringSetting": 1,
     "rotorOffset": "A"
   }],
-  "reflectorType": "B"
+  "reflectorType": "B",
+  "plugBoard": []
 }
