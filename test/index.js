@@ -7,15 +7,15 @@ try {
     let i = 0;
     const results = [];
     for (; i < 26; i++) {
-        enigma.onKey('A', x => results.push(x));
+        const r = enigma.onKey('A');
+        results.push(r);
     }
     assert.equal(results.join(''), 'BDZGOWCXLTKSBTMCDLPBMUQOFX', 'Unexpected result');
 
     enigma.reset();
 
-    enigma.onMessage('AAAAAAAAAAAAAAAAAAAAAAAAAA', result => {
-        assert.equal(result, 'BDZGOWCXLTKSBTMCDLPBMUQOFX', 'Unexpected result')
-    });
+    const result = enigma.onMessage('AAAAAAAAAAAAAAAAAAAAAAAAAA');
+    assert.equal(result, 'BDZGOWCXLTKSBTMCDLPBMUQOFX', 'Unexpected result');
 } catch (e) {
     console.log(e.message);
 }

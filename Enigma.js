@@ -1,5 +1,4 @@
 const _ = require('underscore');
-const Controller = require('./Controller');
 const Plugboard = require('./Plugboard');
 const Rotor = require('./Rotor');
 
@@ -84,9 +83,6 @@ class Enigma {
         // For M4, we need the tiny reflector wheels (-T)
         const reflectorType = `UKW-${options.reflectorType}${this.type === 3 ? '' : '-T'}`;
 
-        // Rotor controller (signal flows right-to-left)
-        this.controller = new Controller();
-
         // Create the rotors from the options
         const rotors = options.rotors.map(r => new Rotor({
             type: r.type,
@@ -94,7 +90,10 @@ class Enigma {
             rotorOffset: r.rotorOffset,
         }));
 
-        // Keep the rotors for later use
+        // Keep the rotors for later use. Please mind the reverse here.
+        // This is because the signal flow if right-to-left, but we
+        // pass in the rotors left-to-right, which is also how it would
+        // be viewed on an actual Enigma machine.
         this.rotors = Object.assign([], rotors.reverse());
 
         // Entry wheel
@@ -105,12 +104,18 @@ class Enigma {
         // Reflector
         this.rr = new Rotor({ type: reflectorType });
 
+        // The controller holds the rotors
+        this.controller = [];
+
         // Add the rotors to the controller
-        this.controller.use(this.ew.fwd);
-        rotors.forEach(r => this.controller.use(r.fwd));
-        this.controller.use(this.rr.fwd);
-        rotors.reverse().forEach(r => this.controller.use(r.rev));
-        this.controller.use(this.ew.rev);
+        // Forward path
+        this.controller.push(this.ew.fwd);
+        rotors.forEach(r => this.controller.push(r.fwd));
+        // Reverse rotor
+        this.controller.push(this.rr.fwd);
+        // Reverse path
+        rotors.reverse().forEach(r => this.controller.push(r.rev));
+        this.controller.push(this.ew.rev);
     }
 
     /**
@@ -153,33 +158,26 @@ class Enigma {
      * Called when a key is pressed. The resultListener passed in here overrides
      * the one passed in through the constructor.
      */
-    onKey(key, resultListener) {
-        if (!key || !resultListener || key.length !== 1) {
+    onKey(key) {
+        if (!key || key.length !== 1) {
             throw new Error('Invalid use of onKey()');
         }
-
-        this.context = { value: key.toUpperCase() };
 
         // The key press originally progressed the wheels, before closing the circuit.
         this._tick();
 
-        // Calculate result of "closed circuit"
-        this.controller.run([this.context], (err) => {
-            if (err) console.log(err);
-
-            if (resultListener) {
-                resultListener(this.context.value);
-            }
-        });
+        // Run the machine logic
+        this.context = { value: key.toUpperCase() };
+        this.controller.forEach(x => x(this.context));
+        return this.context.value;
     }
 
     /**
      * Encode an entire message character by character
      * @param msg
-     * @param resultListener
      */
-    onMessage(msg, resultListener) {
-        if (!msg || !resultListener || msg.length < 1) {
+    onMessage(msg) {
+        if (!msg || msg.length < 1) {
             throw new Error('Invalid use of onMessage()');
         }
 
@@ -188,23 +186,11 @@ class Enigma {
          */
         const result = [];
 
-        /**
-         * Encode letters until we're done
-         */
-        const encodeLetters = (i) => {
-            // Are we done yet?
-            if (i === msg.length) return resultListener(result.join(''));
-
-            this.onKey(msg.substr(i, 1), x => {
-                result.push(x);
-                return encodeLetters(i + 1);
-            });
-        };
-
-        /**
-         * Encode recursively
-         */
-        encodeLetters(0);
+        let i = 0;
+        while (i < msg.length) {
+            result.push(this.onKey(msg[i++]));
+        }
+        return result.join('');
     }
 }
 

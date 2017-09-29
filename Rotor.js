@@ -92,23 +92,19 @@ class Rotor {
     /**
      * The forward path through the rotors (toward the reflector)
      * @param ctx
-     * @param next
      */
-    fwd(ctx, next) {
+    fwd(ctx) {
         const enc = n => _idx(this.rotor[n]);
         this._encdec(ctx, enc);
-        next();
     };
 
     /**
      * The reverse path through the rotors (away from the reflector)
      * @param ctx
-     * @param next
      */
-    rev(ctx, next) {
+    rev(ctx) {
         const dec = n => this.rotor.indexOf(_chr(n));
         this._encdec(ctx, dec);
-        next();
     }
 
     /**
