@@ -90,8 +90,7 @@ class Rotor {
      * @param ctx
      */
     fwd(ctx) {
-        const enc = n => _idx(this.rotor[n]);
-        this._encdec(ctx, enc);
+        this._encdec(ctx, n => _idx(this.rotor[n]));
     };
 
     /**
@@ -99,8 +98,7 @@ class Rotor {
      * @param ctx
      */
     rev(ctx) {
-        const dec = n => this.rotor.indexOf(_chr(n));
-        this._encdec(ctx, dec);
+        this._encdec(ctx, n => this.rotor.indexOf(_chr(n)));
     }
 
     /**
