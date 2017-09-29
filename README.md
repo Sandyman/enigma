@@ -13,9 +13,8 @@ const Enigma = require('enigma');
 const enigma = new Enigma();
 
 // Now "press" a key and show the result
-enigma.onKey('A', result => {
-    console.log(`'A' becomes ${result}`);
-});
+const encodedLetter = enigma.onKey('A');
+console.log(`'A' becomes ${encodedLetter}`);
 ```
 
 Please note that creating a new Enigma can throw an error if the options are incorrect. Wrapping it in a `try`/`catch` is probably a good idea.
@@ -48,6 +47,8 @@ This is also available as a JSON file inside the `test` directory.
 
 The rotors in the array are from LEFT to RIGHT. The `type` defines which Enigma you want to use: 3 for M3, 4 for M4. Upon initalisation, the number of rotors will be checked. You need to pass in 3 rotors for an M3 and 4 rotors for an M4. However, independent of that choice, the first rotor in the array is always the LEFT one as seen by the operator.
 
+When you're configuring the M4, the left rotor (first one in the list) can be of type 'beta' or 'gamma'. Any other rotor at this position will throw an Error.
+
 The rotors that are allowed are I - VIII. You cannot use the same rotor twice in a configuration. The reflector type is either B or C. Different reflectors are used for M3 and M4, but this is done automatically. You only have to configure B or C.
 
 ### API 
@@ -60,17 +61,15 @@ The rotors that are allowed are I - VIII. You cannot use the same rotor twice in
 
 #### Encode a single letter
 
-`onKey(c, resultListener)`
+`onKey(c)`
 
-`c` - a character that needs to be encoded. Assumed to be a string with length of 1.
-`resultListener` - a callback function that takes a string as parameter (the encoded input character).
+`c` - a character that needs to be encoded. Enforced to be a string with length of 1.
 
 #### Encode an entire message
 
-`onMessage(msg, resultListener)`
+`onMessage(msg)`
 
-`msg` - a message that needs to be encoded. May not be empty.
-`resultListener` - a callback function that takes a string as parameter (the encoded input message).
+`msg` - a message that needs to be encoded. May not be empty, it should have length 1 or greater.
 
 #### Reinitialise the Enigma
 
