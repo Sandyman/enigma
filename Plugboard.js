@@ -3,7 +3,6 @@ const _ = require('underscore');
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-const _chr = (i) => alphabet[i];
 const _idx = (v) => alphabet.indexOf(v);
 
 class Plugboard {
@@ -56,7 +55,8 @@ class Plugboard {
      * @param ctx
      */
     rev(ctx) {
-        ctx.value = _chr(this.mapping.indexOf(ctx.value));
+        // Identical to forward path, because characters are simply swapped
+        this.fwd(ctx);
     }
 }
 
