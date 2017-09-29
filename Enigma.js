@@ -67,6 +67,7 @@ class Enigma {
             throw new Error(`Invalid number of rotors provided (should be ${options.type}).`);
         }
 
+        // In an M4, the left rotor must be of type beta or gamma.
         if (options.type === 4) {
             if (options.rotor[0] !== 'beta' && options.rotor[0] !== 'gamma') {
                 throw new Error('Left ring in M4 must be beta or gamma.');
@@ -130,12 +131,15 @@ class Enigma {
         this.controller = [];
 
         // Add the rotors to the controller
+
         // Forward path
         this.controller.push(this.plugBoard.fwd);
         this.controller.push(this.ew.fwd);
         rotors.forEach(r => this.controller.push(r.fwd));
+
         // Reverse rotor
         this.controller.push(this.rr.fwd);
+
         // Reverse path
         rotors.reverse().forEach(r => this.controller.push(r.rev));
         this.controller.push(this.ew.rev);
