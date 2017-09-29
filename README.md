@@ -49,7 +49,7 @@ The rotors in the array are from LEFT to RIGHT. The `type` defines which Enigma 
 
 When you're configuring the M4, the left rotor (first one in the list) can be of type 'beta' or 'gamma'. Any other rotor at this position will throw an Error.
 
-The rotors that are allowed are I - VIII. You cannot use the same rotor twice in a configuration. The reflector type is either B or C. Different reflectors are used for M3 and M4, but this is done automatically. You only have to configure B or C.
+The rotors that are allowed are I - VIII, and cannot use the same rotor twice in a configuration. The reflector type is either B or C. Different reflectors are used for M3 and M4, but this is handled automatically. To make life a little bit easier, you only have to configure B or C.
 
 ### API 
 
