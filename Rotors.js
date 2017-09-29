@@ -44,12 +44,10 @@ const Rotors = {
     'beta': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
         sub: 'ESOVPZJAYQUIRHXLNFTGKDCMWB',
-        turnover: 'J',
     },
     'gamma': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
         sub: 'VZBRGITYUPSDNHLXAWMJQOFECK',
-        turnover: 'Z',
     },
     'UKW-B': {
         //    ABCDEFGHIJKLMNOPQRSTUVWXYZ
