@@ -4,9 +4,7 @@ const Rotor = require('./Rotor');
 
 class Enigma {
     /**
-     * Constructor. You can pass in a resultListener here or through
-     * onKey() (see below). If you pass in a resultListener though onKey(),
-     * it will override the one passed in here.
+     * Constructor. Pass in options if you want to, otherwise default options are used.
      */
     constructor(options) {
         this.options = Object.assign({}, options || Enigma.defaultOptions());
