@@ -20,9 +20,8 @@ class Rotor {
         this.type = options.type;
         this.rotor = Rotors[this.type].sub;
         this.turnover = Rotors[this.type].turnover || '';
-        this.isFixed = !!options.isFixed;
         this.ringSetting = (options.ringSetting || 1) - 1;
-        this.rotorOffset = options.rotorOffset;
+        this.rotorOffset = options.rotorOffset || 0;
     }
 
     /**
@@ -48,13 +47,15 @@ class Rotor {
 
         // Check and sanitise the wheel setting (grundstellung)
         if (options.rotorOffset) {
-            options.rotorOffset = options.rotorOffset[0].toUpperCase();
+            if (options.rotorOffset.length !== 1) {
+                throw new Error(`Invalid rotor offset ${options.rotorOffset}.`);
+            }
+
+            options.rotorOffset = options.rotorOffset.toUpperCase();
             if (_idx(options.rotorOffset) < 0) {
                 throw new Error(`Invalid rotor offset ${options.rotorOffset}.`);
             }
             options.rotorOffset = _idx(options.rotorOffset);
-        } else {
-            options.rotorOffset = 0;
         }
     }
 
@@ -75,7 +76,7 @@ class Rotor {
      */
     _encdec(ctx, f) {
         // Take into account that some rotors don't rotate
-        const offset = this.turnover ? this.rotorOffset : 0;
+        const offset = this.rotorOffset;
 
         let n = _idx(ctx.value);
         n = _mod(n - this.ringSetting);
