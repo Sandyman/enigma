@@ -106,7 +106,7 @@ class Rotor {
      * (to the left of this one) will rotate too.
      */
     isLatched() {
-        return this.turnover.indexOf(this.inView()) >= 0;
+        return this.turnover && this.turnover.indexOf(this.inView()) >= 0;
     }
 
     /**
