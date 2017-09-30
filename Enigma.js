@@ -101,22 +101,20 @@ class Enigma {
         const subType = this.type === 3 ? options.reflectorType : options.reflectorType.toLowerCase();
         const reflectorType = `UKW-${subType}`;
 
-        // Create the rotors from the options
-        const rotors = options.rotors.map(r => new Rotor(r));
+        // Reflector
+        this.rr = new Rotor({ type: reflectorType });
 
-        // Keep the rotors for later use. Please mind the reverse() call here.
-        // This is because the signal flow if right-to-left, but we pass in
-        // the rotors left-to-right, which is also how it would be viewed on
-        // an actual Enigma machine.
-        this.rotors = Object.assign([], rotors.reverse());
+        // Create the rotors from the options. We reverse the order, since
+        // we read left-to-right, but the signal flow is right-to-left.
+        const rotors = options.rotors.map(r => new Rotor(r)).reverse();
+
+        // Keep the rotors for later use.
+        this.rotors = Object.assign([], rotors);
 
         // Entry wheel
         this.ew = new Rotor({
             type: 'ETW',
         });
-
-        // Reflector
-        this.rr = new Rotor({ type: reflectorType });
 
         // Plugboard
         this.plugBoard = new Plugboard(this.options.plugBoard);
@@ -124,7 +122,9 @@ class Enigma {
         // The controller holds the rotors
         this.controller = [];
 
-        // Add the rotors to the controller
+        /*
+         * Add the rotors to the controller
+         */
 
         // Forward path
         this.controller.push(this.plugBoard.fwd);
