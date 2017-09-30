@@ -67,7 +67,7 @@ class Enigma {
 
         // In an M4, the left rotor must be of type beta or gamma.
         if (options.type === 4) {
-            if (options.rotor[0] !== 'beta' && options.rotor[0] !== 'gamma') {
+            if (options.rotors[0].type !== 'beta' && options.rotors[0].type !== 'gamma') {
                 throw new Error('Left ring in M4 must be beta or gamma.');
             }
         }
