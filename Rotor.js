@@ -17,8 +17,9 @@ class Rotor {
     constructor(options) {
         autoBind(this);
 
-        this.rotor = Rotors[options.type].sub;
-        this.turnover = Rotors[options.type].turnover || '';
+        this.type = options.type;
+        this.rotor = Rotors[this.type].sub;
+        this.turnover = Rotors[this.type].turnover || '';
         this.isFixed = !!options.isFixed;
         this.ringSetting = (options.ringSetting || 1) - 1;
         this.rotorOffset = options.rotorOffset;
