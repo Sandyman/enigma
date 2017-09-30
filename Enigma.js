@@ -102,11 +102,7 @@ class Enigma {
         const reflectorType = `UKW-${subType}`;
 
         // Create the rotors from the options
-        const rotors = options.rotors.map(r => new Rotor({
-            type: r.type,
-            ringSetting: r.ringSetting,
-            rotorOffset: r.rotorOffset,
-        }));
+        const rotors = options.rotors.map(r => new Rotor(r));
 
         // Keep the rotors for later use. Please mind the reverse() call here.
         // This is because the signal flow if right-to-left, but we pass in
@@ -152,6 +148,13 @@ class Enigma {
     }
 
     /**
+     * Reset the configuration
+     */
+    reset() {
+        this._init();
+    }
+
+    /**
      * The mechanism is advanced at key press event, but **before** the
      * circuit is closed.
      */
@@ -171,13 +174,6 @@ class Enigma {
 
         // Rotor 1 always turns over
         this.rotors[0].onTurnover();
-    }
-
-    /**
-     * Reset the configuration
-     */
-    reset() {
-        this._init();
     }
 
     /**
