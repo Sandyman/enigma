@@ -32,20 +32,18 @@ class Enigma {
      * Constructor. Pass in options if you want to, otherwise default options are used.
      */
     constructor(options) {
+        this.options = Object.assign({}, options || Enigma.defaultOptions());
+
         try {
-            Enigma._checkOptions(options);
+            Enigma._checkOptions(this.options);
 
             // Initialise machine
-            this._init(options);
+            this._init(this.options);
         } catch (e) {
+            console.log(e.message);
             let ex = new Error();
             if (e.name === 'EnigmaError') {
-                const msg = [
-                    'Oops, something went wrong! Please check your config:',
-                    JSON.stringify(options, null, 3),
-                    e.message
-                ];
-                ex.message = msg.join('\n');
+                ex.message = e.message;
                 ex.code = e.status;
             } else {
                 ex.message = 'Internal Server Error';
@@ -100,10 +98,8 @@ class Enigma {
      * Initialise Enigma.
      */
     _init(options) {
-        this.options = Object.assign({}, options || Enigma.defaultOptions());
-
         // For M4, we need the tiny reflector wheels (b/c)
-        const subType = options.type === 3 ? options.reflectorType : options.reflectorType.toLowerCase();
+        const subType = this.options.type === 3 ? this.options.reflectorType : this.options.reflectorType.toLowerCase();
         const reflectorType = `UKW-${subType}`;
 
         // Reflector
