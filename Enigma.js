@@ -4,28 +4,6 @@ const Rotor = require('./Rotor');
 
 class Enigma {
     /**
-     * Constructor. Pass in options if you want to, otherwise default options are used.
-     */
-    constructor(options) {
-        this.options = Object.assign({}, options || Enigma.defaultOptions());
-
-        try {
-            // Check options, obviously
-            Enigma._checkOptions(this.options);
-        } catch (e) {
-            const ers = [
-                'Oops, something went wrong! Please check your config:',
-                JSON.stringify(this.options, null, 3),
-                e.message
-            ];
-            throw new Error(ers.join('\n'));
-        }
-
-        // Initialise machine
-        this._init();
-    }
-
-    /**
      * Default options when no options passed in
      */
     static defaultOptions() {
@@ -46,6 +24,23 @@ class Enigma {
             }],
             reflectorType: 'B',
             plugBoard: [],
+        }
+    }
+
+    /**
+     * Constructor. Pass in options if you want to, otherwise default options are used.
+     */
+    constructor(options) {
+        try {
+            // Initialise machine
+            this._init(options);
+        } catch (e) {
+            const ers = [
+                'Oops, something went wrong! Please check your config:',
+                JSON.stringify(this.options, null, 3),
+                e.message
+            ];
+            throw new Error(ers.join('\n'));
         }
     }
 
@@ -93,12 +88,13 @@ class Enigma {
     /**
      * Initialise Enigma.
      */
-    _init() {
-        const options = this.options;
-        this.type = options.type;
+    _init(options) {
+        this.options = Object.assign({}, options || Enigma.defaultOptions());
+
+        Enigma._checkOptions(options);
 
         // For M4, we need the tiny reflector wheels (b/c)
-        const subType = this.type === 3 ? options.reflectorType : options.reflectorType.toLowerCase();
+        const subType = options.type === 3 ? options.reflectorType : options.reflectorType.toLowerCase();
         const reflectorType = `UKW-${subType}`;
 
         // Reflector
