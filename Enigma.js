@@ -40,12 +40,12 @@ class Enigma {
         } catch (e) {
             let ex = new Error();
             if (e.name === 'EnigmaError') {
-                const ers = [
+                const msg = [
                     'Oops, something went wrong! Please check your config:',
-                    JSON.stringify(this.options, null, 3),
+                    JSON.stringify(options, null, 3),
                     e.message
                 ];
-                ex.message = ers.join('\n');
+                ex.message = msg.join('\n');
                 ex.code = e.status;
             } else {
                 ex.message = 'Internal Server Error';
