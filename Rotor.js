@@ -21,7 +21,7 @@ class Rotor {
         this.rotor = Rotors[this.type].sub;
         this.turnover = Rotors[this.type].turnover || '';
         this.ringSetting = (options.ringSetting || 1) - 1;
-        this.rotorOffset = options.rotorOffset || 0;
+        this.rotorOffset = _idx(options.rotorOffset || 'A');
     }
 
     /**
@@ -45,7 +45,7 @@ class Rotor {
             }
         }
 
-        // Check and sanitise the wheel setting (grundstellung)
+        // Check the wheel setting (grundstellung)
         if (options.rotorOffset) {
             if (options.rotorOffset.length !== 1) {
                 throw new Error(`Invalid rotor offset ${options.rotorOffset}.`);
@@ -55,7 +55,6 @@ class Rotor {
             if (_idx(options.rotorOffset) < 0) {
                 throw new Error(`Invalid rotor offset ${options.rotorOffset}.`);
             }
-            options.rotorOffset = _idx(options.rotorOffset);
         }
     }
 
