@@ -33,6 +33,8 @@ class Enigma {
      */
     constructor(options) {
         try {
+            Enigma._checkOptions(options);
+
             // Initialise machine
             this._init(options);
         } catch (e) {
@@ -100,8 +102,6 @@ class Enigma {
     _init(options) {
         this.options = Object.assign({}, options || Enigma.defaultOptions());
 
-        Enigma._checkOptions(options);
-
         // For M4, we need the tiny reflector wheels (b/c)
         const subType = options.type === 3 ? options.reflectorType : options.reflectorType.toLowerCase();
         const reflectorType = `UKW-${subType}`;
@@ -156,7 +156,7 @@ class Enigma {
      * Reset the configuration
      */
     reset() {
-        this._init();
+        this._init(this.options);
     }
 
     /**
