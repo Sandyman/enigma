@@ -1,5 +1,6 @@
 const autoBind = require('auto-bind');
 const _ = require('underscore');
+const EnigmaError = require('./EnigmaError');
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -30,14 +31,14 @@ class Plugboard {
     static checkOptions(mapping) {
         const s = mapping.join('');
         if (s.length > 26) {
-            throw new Error('You can only map 13 characters.');
+            throw new EnigmaError(400, 'You can only map 13 characters.');
         }
         if (s.length !== _.uniq(s).length) {
-            throw new Error('All plug board mappings must be unique.');
+            throw new EnigmaError(409, 'All plug board mappings must be unique.');
         }
         mapping.map(x => {
             if (x.length !== 2) {
-                throw new Error('A mapping must contain exactly two characters.');
+                throw new EnigmaError(400, 'A mapping must contain exactly two characters.');
             }
         })
     }

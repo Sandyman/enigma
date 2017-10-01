@@ -1,4 +1,5 @@
 const autoBind = require('auto-bind');
+const EnigmaError = require('./EnigmaError');
 const Rotors = require('./Rotors');
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -31,29 +32,29 @@ class Rotor {
     static checkOptions(options) {
         // Check whether a valid rotor type is passed in
         if (!Rotors[options.type]) {
-            throw new Error(`Unknown Rotor Type '${options.type}'.`);
+            throw new EnigmaError(400, `Unknown Rotor Type '${options.type}'.`);
         }
 
         // Check the ringSetting (ringstellung)
         if (options.ringSetting) {
             if (typeof options.ringSetting !== 'number') {
-                throw new Error('Ring setting must be a number.');
+                throw new EnigmaError(400, 'Ring setting must be a number.');
             }
 
             if (options.ringSetting < 1 || options.ringSetting > 26) {
-                throw new Error('Ring setting must be between 1 and 26.');
+                throw new EnigmaError(400, 'Ring setting must be between 1 and 26.');
             }
         }
 
         // Check the wheel setting (grundstellung)
         if (options.rotorOffset) {
             if (options.rotorOffset.length !== 1) {
-                throw new Error(`Invalid rotor offset ${options.rotorOffset}.`);
+                throw new EnigmaError(400, `Invalid rotor offset ${options.rotorOffset}.`);
             }
 
             options.rotorOffset = options.rotorOffset.toUpperCase();
             if (_idx(options.rotorOffset) < 0) {
-                throw new Error(`Invalid rotor offset ${options.rotorOffset}.`);
+                throw new EnigmaError(400, `Invalid rotor offset ${options.rotorOffset}.`);
             }
         }
     }

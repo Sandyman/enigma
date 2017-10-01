@@ -1,4 +1,5 @@
 const _ = require('underscore');
+const EnigmaError = require('./EnigmaError');
 const Plugboard = require('./Plugboard');
 const Rotor = require('./Rotor');
 
@@ -35,12 +36,20 @@ class Enigma {
             // Initialise machine
             this._init(options);
         } catch (e) {
-            const ers = [
-                'Oops, something went wrong! Please check your config:',
-                JSON.stringify(this.options, null, 3),
-                e.message
-            ];
-            throw new Error(ers.join('\n'));
+            let ex = new Error();
+            if (e.name === 'EnigmaError') {
+                const ers = [
+                    'Oops, something went wrong! Please check your config:',
+                    JSON.stringify(this.options, null, 3),
+                    e.message
+                ];
+                ex.message = ers.join('\n');
+                ex.code = e.status;
+            } else {
+                ex.message = 'Internal Server Error';
+                ex.code = 500;
+            }
+            throw ex;
         }
     }
 
@@ -52,30 +61,30 @@ class Enigma {
     static _checkOptions(options) {
         // We only allow enigma M3 and M4
         if (options.type !== 3 && options.type !== 4) {
-            throw new Error(`Invalid machine type '${options.type}' provided.`);
+            throw new EnigmaError(400, `Invalid machine type '${options.type}' provided.`);
         }
 
         // Check that we have the correct number of rotors in the options
         if (options.rotors.length !== options.type) {
-            throw new Error(`Invalid number of rotors provided (should be ${options.type}).`);
+            throw new EnigmaError(409, `Invalid number of rotors provided (should be ${options.type}).`);
         }
 
         // In an M4, the left rotor must be of type beta or gamma.
         if (options.type === 4) {
             if (options.rotors[0].type !== 'beta' && options.rotors[0].type !== 'gamma') {
-                throw new Error('Left ring in M4 must be beta or gamma.');
+                throw new EnigmaError(409, 'Left ring in M4 must be beta or gamma.');
             }
         }
 
         // Check that no rotor is used twice
         const u = _.uniq(options.rotors, x => x.type);
         if (u.length !== options.rotors.length) {
-            throw new Error('You cannot use the same rotor twice.');
+            throw new EnigmaError(409, 'You cannot use the same rotor twice.');
         }
 
         // Check that a valid reflector type was provided
         if ('BC'.indexOf(options.reflectorType) < 0) {
-            throw new Error('Invalid reflector type provided (should be B or C).');
+            throw new EnigmaError(400, 'Invalid reflector type provided (should be B or C).');
         }
 
         // Check plug board options
@@ -178,7 +187,7 @@ class Enigma {
      */
     onKey(key) {
         if (!key || key.length !== 1) {
-            throw new Error('Invalid use of onKey()');
+            throw new EnigmaError('Invalid use of onKey()');
         }
 
         // The key press originally progressed the wheel(s), before closing the circuit.
@@ -196,7 +205,7 @@ class Enigma {
      */
     onMessage(msg) {
         if (!msg || msg.length < 1) {
-            throw new Error('Invalid use of onMessage()');
+            throw new EnigmaError('Invalid use of onMessage()');
         }
 
         // Simulate key presses for all characters in the message
