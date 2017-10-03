@@ -2,7 +2,7 @@
 
 This is my attempt at making a simple Enigma simulator. I've looked extensively at lots of web pages, but mostly Wikipedia.
 
-I have focussed on functionality, so this simulator behaves as a proper Enigma M3/M4. This includes the "double stepping", which was probably unintended in the original device.
+I have focused on functionality, so this simulator behaves as a proper Enigma M3/M4. This includes the "double stepping", which was probably unintended in the original device.
 
 ### Example
 
