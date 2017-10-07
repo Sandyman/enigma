@@ -99,7 +99,8 @@ class Enigma {
      */
     _init(options) {
         // For M4, we need the tiny reflector wheels (b/c)
-        const subType = this.options.type === 3 ? this.options.reflectorType : this.options.reflectorType.toLowerCase();
+        this.type = this.options.type;
+        const subType = this.type === 3 ? this.options.reflectorType : this.options.reflectorType.toLowerCase();
         const reflectorType = `UKW-${subType}`;
 
         // Reflector
@@ -197,12 +198,34 @@ class Enigma {
 
     /**
      * Encode an entire message character by character
+     * @param rotors [optional]
      * @param msg
      */
-    onMessage(msg) {
-        if (!msg || msg.length < 1) {
-            throw new EnigmaError('Invalid use of onMessage()');
+    onMessage(rotors, msg) {
+        if (!msg) {
+            msg = rotors;
+            rotors = null;
         }
+        if (!msg || msg.length < 1) {
+            throw new EnigmaError('Empty message passed to onMessage()');
+        }
+
+        if (rotors) {
+            if (rotors.length !== this.rotors.length) {
+                throw new EnigmaError('Wrong number of rotors passed to onMessage()');
+            }
+
+            if (!/^[A-Z]{3,4}$/.exec(rotors)) {
+                throw new EnigmaError('Invalid rotors settings passed to onMessage()')
+            }
+
+            // Setup the rotor offsets
+            rotors.split('').reverse().forEach((r, i) => this.rotors[i].setOffset(r));
+        }
+
+        // Be forgiving: turn everything into uppercase, replace ' ' with X,
+        // remove everything that is not a character A-Z.
+        msg = msg.toUpperCase().replace(/\s/g, 'X').replace(/[^A-Z]/g, '');
 
         // Simulate key presses for all characters in the message
         return msg.split('').map(x => this.onKey(x)).join('');

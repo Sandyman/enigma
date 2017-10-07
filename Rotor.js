@@ -117,6 +117,17 @@ class Rotor {
     onTurnover() {
         this.rotorOffset = _mod(this.rotorOffset + 1);
     }
+
+    /**
+     * Set offset for this rotor
+     * @param offset
+     */
+    setOffset(offset) {
+        this.rotorOffset = _idx(offset);
+        if (this.rotorOffset < 0) {
+            this.rotorOffset = 0;
+        }
+    }
 }
 
 module.exports = Rotor;
