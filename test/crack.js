@@ -11,6 +11,7 @@ const CHECK = MESSAGE_TO_CRACK.substr(0, 6);
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+// Rotors to choose from
 const Rtrs = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 
 /**
@@ -21,7 +22,7 @@ const Rtrs = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
  */
 const perm3 = a => {
     const r = [];
-    r.push([a[0], a[1], a[2]]);
+    r.push(a);
     r.push([a[0], a[2], a[1]]);
     r.push([a[1], a[0], a[2]]);
     r.push([a[1], a[2], a[0]]);
@@ -30,36 +31,30 @@ const perm3 = a => {
     return r;
 };
 
-const results = [];
-
-const config = {
-    type: 3,
-    reflectorType: 'B',
-    rotors: [{
-        "ringSetting": 1
-    }, {
-        "ringSetting": 1
-    }, {
-        "ringSetting": 1
-    }],
-    "plugBoard": []
-};
-
+/**
+ * Iterate through all rotor offsets, taking into account the double stepping.
+ * @param config
+ * @param q
+ * @param results
+ */
 const iterate = (config, q, results) => {
     const enigma = new Enigma(config);
 
     let X, Y, Z;
     for (let x = 0; x < alphabet.length; x++) {
         for (let y = 0; y < alphabet.length; y++) {
+            Y = alphabet[y];
+            // Take into account double stepping (halves the key space)
+            if (Rotors[Rtrs[q[1]]].turnover.indexOf(Y) >= 0) {
+                // If the left-most rotor returns to 'A', we're done.
+                if (++x >= alphabet.length) return;
+
+                // The middle rotor could turn from 'Z' to 'A'
+                if (++y >= alphabet.length) y = 0;
+                Y = alphabet[y];
+            }
+            X = alphabet[x];
             for (let z = 0; z < alphabet.length; z++) {
-                // Take into account double stepping
-                Y = alphabet[y];
-                if (Rtrs[q[1]].indexOf(Y) >= 0) {
-                    if (++y >= alphabet.length) y = 0;
-                    if (++x >= alphabet.length) return;
-                }
-                Y = alphabet[y];
-                X = alphabet[x];
                 Z = alphabet[z];
                 const rotors = `${X}${Y}${Z}`;
                 const result = enigma.onMessage(rotors, CHECK);
@@ -77,6 +72,21 @@ const iterate = (config, q, results) => {
             }
         }
     }
+};
+
+const results = [];
+
+const config = {
+    type: 3,
+    reflectorType: 'B',
+    rotors: [{
+        "ringSetting": 1
+    }, {
+        "ringSetting": 1
+    }, {
+        "ringSetting": 1
+    }],
+    "plugBoard": []
 };
 
 const l = 8;
