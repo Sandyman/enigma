@@ -64,7 +64,7 @@ The rotors that are allowed are I - VIII, and you cannot use the same rotor twic
 
 `onKey(c)`
 
-`c` - a character that needs to be encoded. Enforced to be a string with length of 1.
+`c` - a character that needs to be encoded. Enforced to be a string with length of 1; throws an error if the string is any other length.
 
 #### Encode an entire message
 
