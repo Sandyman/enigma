@@ -46,11 +46,11 @@ The default configuration is as follows:
 
 This is also available as a JSON file inside the `test` directory. The plugBoard configuration is an array of letter combinations, like so: ["AE", "PT", "SH"]. Invalid settings will throw an Error. In real life, only 10 pairs were connected.
 
-The rotors in the array are from LEFT to RIGHT. The `type` defines which Enigma you want to use: 3 for M3, 4 for M4. Upon initalisation, the number of rotors will be checked. You need to pass in 3 rotors for an M3 and 4 rotors for an M4. However, independent of that choice, the first rotor in the array is always the LEFT one as seen by the operator.
+The rotors in the array are from LEFT to RIGHT. The `type` defines which Enigma you want to use: 3 for M3, 4 for M4. Upon initialisation, the number of rotors will be checked. You need to pass in 3 rotors for an M3 and 4 rotors for an M4. However, independent of that choice, the first rotor in the array is always the LEFT one as seen by the operator.
 
 When you're configuring the M4, the left rotor (first one in the list) can be of type "beta" or "gamma". Any other rotor at this position will throw an Error.
 
-The rotors that are allowed are I - VIII, and cannot use the same rotor twice in a configuration. The reflector type is either B or C. Different reflectors are used for M3 and M4, but this is handled automatically. To make life a little bit easier, you only have to configure B or C.
+The rotors that are allowed are I - VIII, and you cannot use the same rotor twice in a configuration. The reflector type is either B or C. Different reflectors are used for M3 and M4, but this is handled automatically. To make life a little bit easier, you only have to configure B or C.
 
 ### API 
 
